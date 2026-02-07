@@ -1,0 +1,5 @@
+{
+  "name": "The Architectural Refactory",
+  "description": "A high-precision documentation and visualization tool for transforming architectural blueprints into structured data and high-fidelity renders using Gemini 3 models.",
+  "requestFramePermissions": []
+}

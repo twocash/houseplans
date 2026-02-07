@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carriage House Axiom Engine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              mono: ['JetBrains Mono', 'monospace'],
+            },
+            colors: {
+              blueprint: {
+                50: '#f0f7ff',
+                100: '#e0effe',
+                500: '#0066cc',
+                600: '#0052a3',
+                900: '#002b52',
+              }
+            }
+          }
+        }
+      }
+    </script>
+<script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.sh/@google/genai@^1.40.0",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "@heroicons/react/": "https://esm.sh/@heroicons/react@^2.2.0/"
+  }
+}
+</script>
+<style>
+  .blueprint-grid {
+    background-image: 
+      linear-gradient(to right, rgba(0, 102, 204, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 102, 204, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  .title-block-border {
+    border: 2px solid #1e293b;
+    border-left: 8px solid #1e293b;
+  }
+</style>
+</head>
+<body class="bg-stone-50 text-slate-900 antialiased font-sans blueprint-grid">
+    <div id="root"></div>
+</body>
+</html>
