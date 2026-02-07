@@ -111,7 +111,7 @@ export class ArchitecturalService {
     return JSON.parse(cleanedText);
   }
 
-  private async runStage2Audit(imageUrl: string, library: LibraryItem[], systemInstruction: string): Promise<any> {
+  private async runStage2Audit(imageUrl: string, systemInstruction: string): Promise<any> {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const auditWorkflow = `Analyze the attached rendering against the Cardinal Wall Axioms. 
 
@@ -124,13 +124,13 @@ For EACH visible wall:
 
 Return your response as JSON with this exact structure:
 {
-  "narrative": "Detailed wall-by-wall audit text...",
+  "narrative": "Your detailed wall-by-wall audit text here...",
   "verdict": "PASS" or "FAIL",
   "failures": [
     {
       "category": "ROOF" | "STAIRCASE" | "SOUTH_WALL" | "EAST_WALL" | "WEST_WALL" | "NORTH_WALL" | "DECK" | "FOOTPRINT",
-      "description": "Problem description",
-      "axiom_correction": "Correct constraint"
+      "description": "What is wrong",
+      "axiom_correction": "What the axiom actually requires"
     }
   ],
   "score": {
@@ -249,7 +249,7 @@ Return your response as JSON with this exact structure:
     if (!imageUrl) throw new Error("Stage 1 Pipeline Failure: No image returned.");
 
     onProgress?.("STAGE 2: RUNNING CONFORMITY AUDIT...");
-    const auditData = await this.runStage2Audit(imageUrl, library, systemInstruction);
+    const auditData = await this.runStage2Audit(imageUrl, systemInstruction);
     const isVerified = auditData.verdict === "PASS" && auditData.score.total >= 42;
 
     return {
@@ -326,7 +326,7 @@ ${rubric}`;
     if (!imageUrl) throw new Error("Refinement Failure: No image returned.");
 
     onProgress?.("STAGE 4: RE-AUDITING REFINED RENDER...");
-    const auditData = await this.runStage2Audit(imageUrl, library, systemInstruction);
+    const auditData = await this.runStage2Audit(imageUrl, systemInstruction);
     const isVerified = auditData.verdict === "PASS" && auditData.score.total >= 42;
 
     return {

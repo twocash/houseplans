@@ -30,6 +30,8 @@ const App: React.FC = () => {
     { id: 'a2', title: 'Known-Hallucinations.md', category: 'A', content: '# FAILURE CATALOG\nAvoid drive-through garages.', isActive: true },
     { id: 'b1', title: '01: Exterior Massing', category: 'B', content: 'Generate white-clay exterior {DIRECTION} isometric view.', isActive: true },
     { id: 'b2', title: '02: Axiom Audit', category: 'B', content: 'Verify image against axioms. Return PASS/FAIL.', isActive: true },
+    { id: 'b3', title: '03: Plan View', category: 'B', content: 'Generate top-down floor plan view.', isActive: true },
+    { id: 'b4', title: '04: Interior Room', category: 'B', content: 'Generate interior perspective of {ROOM_NAME}.', isActive: true },
     { id: 'b7', title: '07: Scoring Rubric', category: 'B', content: 'Score output 1-10 on Structural Accuracy.', isActive: true }
   ]);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -38,7 +40,6 @@ const App: React.FC = () => {
   const [statusMessage, setStatusMessage] = useState('');
   const [hasApiKey, setHasApiKey] = useState(false);
 
-  // Render States
   const [renderType, setRenderType] = useState<RenderType>('exterior_iso');
   const [viewpoint, setViewpoint] = useState('SE');
   const [targetRoomId, setTargetRoomId] = useState<string>('');
@@ -106,7 +107,7 @@ const App: React.FC = () => {
         type: renderType,
         viewpoint,
         targetRoomId: targetRoomId || undefined
-      }, library, buildingMap?.rooms.find(r => r.id === targetRoomId), (msg) => {
+      }, library, (buildingMap?.rooms || AXIOM_ROOMS).find(r => r.id === targetRoomId), (msg) => {
         setStatusMessage(msg);
       });
       setRenders(prev => [result, ...prev]);
@@ -138,7 +139,7 @@ const App: React.FC = () => {
       <div className="min-h-screen bg-slate-900 flex items-center justify-center p-8">
         <div className="bg-white border-2 border-slate-900 p-12 max-w-md w-full shadow-2xl text-center space-y-8">
           <ShieldCheckIcon className="w-16 h-16 text-slate-900 mx-auto" />
-          <h2 className="text-3xl font-black uppercase italic tracking-tighter">API Key Required</h2>
+          <h2 className="text-3xl font-black uppercase italic tracking-tighter text-slate-900">API Key Required</h2>
           <p className="text-slate-500 text-xs font-mono uppercase leading-relaxed">Gemini 3 Pro features require a paid API key from a billing-enabled project.</p>
           <button onClick={handleSelectKey} className="w-full bg-slate-900 text-white py-4 font-black uppercase tracking-widest text-xs hover:bg-black transition-all">Select API Key</button>
         </div>
@@ -307,11 +308,14 @@ const App: React.FC = () => {
                             <img src={render.imageUrl} className="w-full h-full object-cover" alt="Render" />
                           </div>
                           <div className="xl:col-span-4 bg-slate-50 border-l border-slate-200 p-6 space-y-6">
+                             {/* Score Badge */}
                              {render.auditScore && (
                                <div className="mb-4 p-3 bg-white border border-slate-200">
                                  <div className="flex justify-between items-center mb-2">
                                    <span className="text-[10px] font-black uppercase">Total Score</span>
-                                   <span className={`text-lg font-black ${render.auditScore.total >= 42 ? 'text-green-600' : 'text-red-600'}`}>{render.auditScore.total}/60</span>
+                                   <span className={`text-lg font-black ${render.auditScore.total >= 42 ? 'text-green-600' : 'text-red-600'}`}>
+                                     {render.auditScore.total}/60
+                                   </span>
                                  </div>
                                  <div className="grid grid-cols-3 gap-1">
                                    {Object.entries(render.auditScore).filter(([k]) => k !== 'total').map(([key, val]) => (
@@ -324,8 +328,9 @@ const App: React.FC = () => {
                                </div>
                              )}
 
+                             {/* Failure List */}
                              {render.auditFailures && render.auditFailures.length > 0 && (
-                               <div className="space-y-1">
+                               <div className="mb-4 space-y-1">
                                  <h4 className="text-[10px] font-black uppercase text-red-600 mb-2">Axiom Violations</h4>
                                  {render.auditFailures.map((f, i) => (
                                    <div key={i} className="p-2 bg-red-50 border-l-2 border-red-500">
@@ -336,6 +341,7 @@ const App: React.FC = () => {
                                  ))}
                                </div>
                              )}
+
                              <div className="font-mono text-[9px] text-slate-600 leading-relaxed max-h-[200px] overflow-y-auto">
                                {render.auditText}
                              </div>
@@ -354,15 +360,24 @@ const App: React.FC = () => {
                                    setIsBusy(true);
                                    setStatusMessage("STAGE 3: AUTO-REFINING RENDER...");
                                    try {
-                                     const refined = await service.current.executeRefinement(render, render.request, library, buildingMap?.rooms.find(r => r.id === render.request.targetRoomId), (msg) => setStatusMessage(msg));
+                                     const refined = await service.current.executeRefinement(
+                                       render,
+                                       render.request,
+                                       library,
+                                       (buildingMap?.rooms || AXIOM_ROOMS).find(r => r.id === render.request.targetRoomId),
+                                       (msg) => setStatusMessage(msg)
+                                     );
                                      setRenders(prev => [refined, ...prev]);
                                    } catch (err: any) {
                                      alert("Refinement Error: " + err.message);
-                                   } finally { setIsBusy(false); }
+                                   } finally {
+                                     setIsBusy(false);
+                                   }
                                  }}
                                  className="bg-slate-900 text-white px-6 py-3 text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all flex items-center gap-2"
                                >
-                                 <WrenchScrewdriverIcon className="w-4 h-4" /> Auto-Refine Render
+                                 <WrenchScrewdriverIcon className="w-4 h-4" />
+                                 Auto-Refine Render
                                </button>
                              )}
                              <button 
@@ -376,7 +391,8 @@ const App: React.FC = () => {
                                }}
                                className="bg-white border border-slate-900 text-slate-900 px-6 py-3 text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center gap-2"
                              >
-                               <ArrowDownTrayIcon className="w-4 h-4" /> Export Image
+                               <ArrowDownTrayIcon className="w-4 h-4" />
+                               Export Image
                              </button>
                            </div>
                         </div>
@@ -422,7 +438,10 @@ const App: React.FC = () => {
           <div className="space-y-8">
              <div className="bg-white border-2 border-slate-900 p-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 shadow-xl">
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div><span className="text-[10px] font-mono text-slate-900 font-black uppercase">System_Synced</span></div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                    <span className="text-[10px] font-mono text-slate-900 font-black uppercase tracking-widest">System_Synced</span>
+                  </div>
                   <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Structural Spatial Inventory</h2>
                 </div>
                 <button onClick={() => setActiveTab('visualizer')} className="bg-slate-900 text-white px-10 py-4 font-black uppercase text-xs flex items-center gap-3">Launch Visualization Pipeline <ArrowRightIcon className="w-4 h-4" /></button>
