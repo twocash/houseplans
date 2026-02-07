@@ -37,15 +37,24 @@ export type RenderType = 'exterior_iso' | 'exterior_elev' | 'interior_plan' | 'i
 
 export interface RenderRequest {
   type: RenderType;
-  viewpoint: string; // e.g., 'SE', 'North', 'Living Room 200'
+  viewpoint: string; 
   targetRoomId?: string;
 }
 
-export interface ValidationStep {
-  category: string;
-  score: number;
-  evidence: string;
-  status: 'PASS' | 'FAIL' | 'WARN';
+export interface AuditFailure {
+  category: 'ROOF' | 'STAIRCASE' | 'SOUTH_WALL' | 'EAST_WALL' | 'WEST_WALL' | 'NORTH_WALL' | 'DECK' | 'FOOTPRINT';
+  description: string;
+  axiom_correction: string;
+}
+
+export interface AuditScore {
+  structural_accuracy: number;
+  spatial_geometry: number;
+  staircase_fidelity: number;
+  deck_accuracy: number;
+  south_wall_solidity: number;
+  render_quality: number;
+  total: number;
 }
 
 export interface RenderResult {
@@ -53,16 +62,19 @@ export interface RenderResult {
   imageUrl: string;
   selfScoreText: string;
   auditText?: string;
+  auditFailures?: AuditFailure[];
+  auditScore?: AuditScore;
   isValidated: boolean;
   status: 'VERIFIED' | 'VIOLATION' | 'PENDING';
   request: RenderRequest;
   timestamp: number;
+  refinementPass?: number;
 }
 
 export interface LibraryItem {
   id: string;
   title: string;
   content: string;
-  category: 'A' | 'B'; // A: Core Constitution (System), B: Workflows (User)
+  category: 'A' | 'B'; 
   isActive: boolean;
 }

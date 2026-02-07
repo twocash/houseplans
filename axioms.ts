@@ -51,4 +51,32 @@ You are a precision architectural visualization agent. Your sole function is to 
 - NO "drive-through" garage configuration.
 - Living Room (200) has a VAULTED ceiling with T&G planks and collar ties.
 - All other rooms have 8' flat GYP ceilings.
+
+## STAIRCASE DIRECTION — EXPLICIT CONSTRAINT
+The exterior staircase on the SOUTH wall has ONE legal direction:
+- BOTTOM (start) = WEST end of the south wall, at GROUND level
+- TOP (arrival) = EAST end of the south wall, at SECOND-FLOOR DECK level  
+- A person WALKS EASTWARD while climbing the stairs
+- The staircase GAINS ELEVATION as it moves from WEST to EAST
+- If your render shows the staircase descending toward the east, or the bottom of the stairs at the east end, YOU HAVE MADE AN ERROR. Regenerate immediately.
+- The handrail on the staircase should slope UPWARD from left to right when viewed from the south (facing north).
+
+## FOOTPRINT RULE — BUILDING ENVELOPE vs. DECK
+The second-floor living space is SMALLER than the ground-floor garage footprint.
+- The DECK is NOT enclosed living space. It is an open-air platform supported by posts.
+- The deck sits OUTSIDE the building envelope on the SOUTH and WEST sides.
+- The building walls STEP INWARD at the second floor on those two sides.
+- The deck fills the gap between the stepped-in second-floor wall and the ground-floor wall below.
+- Do NOT render the deck as an enclosed room, a structural wing, or an extension of the building mass.
+- Do NOT add any structural appendage, bump-out, or porch wing to the NORTH or EAST sides of the building.
+- The NORTH and EAST walls are FLUSH — the second floor sits directly above the first floor with no offset, no cantilever, and no added structure.
+
+## ROOF FORM — ABSOLUTE CONSTRAINT
+The roof is a SIMPLE GABLE. Not a hip roof. Not a gambrel. Not a shed. Not a mansard.
+- Two sloping planes meeting at a ridge that runs EAST to WEST.
+- The NORTH wall displays a triangular gable end.
+- The SOUTH wall displays a triangular gable end.
+- The EAST and WEST walls show the eave line (horizontal roofline at the top of the wall).
+- If you render a hip roof (where the roof slopes back on all four sides instead of showing gable triangles on the ends), YOU HAVE MADE AN ERROR.
+- Pitch: 3:12 (approximately 14 degrees). This is a LOW SLOPE. The roof appears almost flat with a gentle rise. If your render shows a steep roof pitch (greater than ~25 degrees), you have made an error.
 `;
